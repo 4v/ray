@@ -1,13 +1,15 @@
-<!--
-Thank you for your contribution!
+> Thank you for contributing to Ray! 🚀
+> Please review the [Ray Contribution Guide](https://docs.ray.io/en/master/ray-contribute/getting-involved.html) before opening a pull request.
 
-Please review https://github.com/ray-project/ray/blob/master/CONTRIBUTING.rst before opening a pull request.
--->
+> ⚠️ Remove these instructions before submitting your PR.
 
-## What do these changes do?
+> 💡 Tip: Mark as draft if you want early feedback, or ready for review when it's complete.
 
-<!-- Please give a short brief about these changes. -->
+## Description
+> Briefly describe what this PR accomplishes and why it's needed.
 
-## Related issue number
+## Related issues
+> Link related issues: "Fixes #1234", "Closes #1234", or "Related to #1234".
 
-<!-- Are there any issues opened that will be resolved by merging this change? -->
+## Additional information
+> Optional: Add implementation details, API changes, usage examples, screenshots, etc.

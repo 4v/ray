@@ -1,25 +1,26 @@
-from __future__ import absolute_import
-from __future__ import division
-from __future__ import print_function
-
-from ray.rllib.utils.annotations import override
+from ray.rllib.utils.annotations import PublicAPI, override
+from ray.rllib.utils.typing import SampleBatchType
 
 
-class OutputWriter(object):
-    """Writer object for saving experiences from policy evaluation."""
+@PublicAPI
+class OutputWriter:
+    """Writer API for saving experiences from policy evaluation."""
 
-    def write(self, sample_batch):
-        """Save a batch of experiences.
+    @PublicAPI
+    def write(self, sample_batch: SampleBatchType):
+        """Saves a batch of experiences.
 
-        Arguments:
+        Args:
             sample_batch: SampleBatch or MultiAgentBatch to save.
         """
         raise NotImplementedError
 
 
+@PublicAPI
 class NoopOutput(OutputWriter):
     """Output writer that discards its outputs."""
 
     @override(OutputWriter)
-    def write(self, sample_batch):
+    def write(self, sample_batch: SampleBatchType):
+        # Do nothing.
         pass

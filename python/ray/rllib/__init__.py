@@ -1,21 +1,19 @@
-from __future__ import absolute_import
-from __future__ import division
-from __future__ import print_function
-
 import logging
+
+from ray._common.usage import usage_lib
 
 # Note: do not introduce unnecessary library dependencies here, e.g. gym.
 # This file is imported from the tune module in order to register RLlib agents.
-from ray.tune.registry import register_trainable
-
-from ray.rllib.evaluation.policy_graph import PolicyGraph
-from ray.rllib.evaluation.tf_policy_graph import TFPolicyGraph
-from ray.rllib.env.async_vector_env import AsyncVectorEnv
+from ray.rllib.env.base_env import BaseEnv
+from ray.rllib.env.external_env import ExternalEnv
 from ray.rllib.env.multi_agent_env import MultiAgentEnv
 from ray.rllib.env.vector_env import VectorEnv
-from ray.rllib.env.external_env import ExternalEnv
-from ray.rllib.evaluation.policy_evaluator import PolicyEvaluator
-from ray.rllib.evaluation.sample_batch import SampleBatch
+from ray.rllib.evaluation.rollout_worker import RolloutWorker
+from ray.rllib.policy.policy import Policy
+from ray.rllib.policy.sample_batch import SampleBatch
+from ray.rllib.policy.tf_policy import TFPolicy
+from ray.rllib.policy.torch_policy import TorchPolicy
+from ray.tune.registry import register_trainable
 
 
 def _setup_logger():
@@ -24,30 +22,33 @@ def _setup_logger():
     handler.setFormatter(
         logging.Formatter(
             "%(asctime)s\t%(levelname)s %(filename)s:%(lineno)s -- %(message)s"
-        ))
+        )
+    )
     logger.addHandler(handler)
     logger.propagate = False
 
 
 def _register_all():
+    from ray.rllib.algorithms.registry import ALGORITHMS, _get_algorithm_class
 
-    from ray.rllib.agents.registry import ALGORITHMS
-    from ray.rllib.contrib.registry import CONTRIBUTED_ALGORITHMS
-    for key in list(ALGORITHMS.keys()) + list(CONTRIBUTED_ALGORITHMS.keys(
-    )) + ["__fake", "__sigmoid_fake_data", "__parameter_tuning"]:
-        from ray.rllib.agents.registry import get_agent_class
-        register_trainable(key, get_agent_class(key))
+    for key, get_trainable_class_and_config in ALGORITHMS.items():
+        register_trainable(key, get_trainable_class_and_config()[0])
+
+    for key in ["__fake", "__sigmoid_fake_data", "__parameter_tuning"]:
+        register_trainable(key, _get_algorithm_class(key))
 
 
 _setup_logger()
-_register_all()
+
+usage_lib.record_library_usage("rllib")
 
 __all__ = [
-    "PolicyGraph",
-    "TFPolicyGraph",
-    "PolicyEvaluator",
+    "Policy",
+    "TFPolicy",
+    "TorchPolicy",
+    "RolloutWorker",
     "SampleBatch",
-    "AsyncVectorEnv",
+    "BaseEnv",
     "MultiAgentEnv",
     "VectorEnv",
     "ExternalEnv",
